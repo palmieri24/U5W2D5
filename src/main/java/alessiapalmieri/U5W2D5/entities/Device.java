@@ -15,7 +15,7 @@ import lombok.*;
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Enumerated(EnumType.STRING)
     private DeviceType deviceType;
     @Enumerated(EnumType.STRING)

@@ -14,7 +14,7 @@ public record NewEmployeeDTO(
         String name,
         @NotEmpty(message = "Enter lastname")
         @Size(min = 3,max = 20, message = "The lastname must be a minimum of 3 characters and a maximum of 20")
-        String surname,
+        String lastname,
         @Email(message = "Enter email")
         @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not valid!")
         String email,

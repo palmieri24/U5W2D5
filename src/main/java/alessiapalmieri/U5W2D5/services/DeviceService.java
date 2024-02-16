@@ -1,4 +1,118 @@
 package alessiapalmieri.U5W2D5.services;
 
+import alessiapalmieri.U5W2D5.DTO.NewDeviceDTO;
+import alessiapalmieri.U5W2D5.DTO.NewEmployeeDeviceDTO;
+import alessiapalmieri.U5W2D5.DTO.NewStatusDTO;
+import alessiapalmieri.U5W2D5.Enum.DeviceStatus;
+import alessiapalmieri.U5W2D5.Enum.DeviceType;
+import alessiapalmieri.U5W2D5.entities.Device;
+import alessiapalmieri.U5W2D5.entities.Employee;
+import alessiapalmieri.U5W2D5.exceptions.BadRequestException;
+import alessiapalmieri.U5W2D5.exceptions.NotFoundException;
+import alessiapalmieri.U5W2D5.repositories.DeviceRepository;
+import alessiapalmieri.U5W2D5.repositories.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Optional;
+
+@Service
 public class DeviceService {
+    @Autowired
+    private DeviceRepository deviceRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public Page<Device> getDevices(int page, int size, String orderBy){
+        Pageable pageable = PageRequest.of(page,size, Sort.by(orderBy));
+        return deviceRepository.findAll(pageable);
+    }
+
+    public Device findById(long id){
+        return deviceRepository.findById(id).orElseThrow(()->new NotFoundException(id));
+    }
+    public void findByIdAndDelete(long id) throws NotFoundException {
+        Device found = this.findById(id);
+        deviceRepository.delete(found);
+    }
+
+    public Device save(NewDeviceDTO body) {
+        Device newDevice = new Device();
+        String deviceType = body.deviceType();
+
+        if (deviceType == null) {
+            throw new BadRequestException("Device type is a mandatory field! Choose between SMARTPHONE, TABLET, LAPTOP");
+        }
+        switch (deviceType.trim().toUpperCase()) {
+            case "SMARTPHONE":
+                newDevice.setDeviceType(DeviceType.SMARTPHONE);
+                break;
+            case "TABLET":
+                newDevice.setDeviceType(DeviceType.TABLET);
+                break;
+            case "LAPTOP":
+                newDevice.setDeviceType(DeviceType.LAPTOP);
+                break;
+            default:
+                throw new BadRequestException("Invalid or non-string input! Choose between SMARTPHONE, TABLET, LAPTOP");
+        }
+        newDevice.setDeviceStatus(DeviceStatus.AVAILABLE);
+        newDevice.setEmployee(null);
+        return deviceRepository.save(newDevice);
+    }
+
+    public Device findByIdAndUpdateStatus(long id, NewStatusDTO body) {
+        Device found = deviceRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+
+        switch (body.deviceStatus().trim().toUpperCase()) {
+            case "AVAILABLE":
+                found.setEmployee(null);
+                found.setDeviceType(found.getDeviceType());
+                found.setDeviceStatus(DeviceStatus.AVAILABLE);
+                found.setId(found.getId());
+                return deviceRepository.save(found);
+
+            case "DISPOSED":
+                found.setEmployee(null);
+                found.setDeviceType(found.getDeviceType());
+                found.setDeviceStatus(DeviceStatus.DISPOSED);
+                found.setId(found.getId());
+                return deviceRepository.save(found);
+
+            case "MAINTENANCE":
+                found.setEmployee(null);
+                found.setDeviceType(found.getDeviceType());
+                found.setDeviceStatus(DeviceStatus.MAINTENANCE);
+                found.setId(found.getId());
+                return deviceRepository.save(found);
+
+            case "ASSIGNED":
+                throw new BadRequestException("To assign a device, change its user and it will be done automatically");
+
+            default:
+                throw new BadRequestException("Value entered is invalid or not of type String! Choose between AVAILABLE, MAINTENANCE, DISPOSED");
+        }
+    }
+    public Device findByIdAndUpdateEmployee(long id, NewEmployeeDeviceDTO body) {
+        Device found = deviceRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+        Optional<Device> idFound = deviceRepository.findByEmployee_id(body.id());
+
+        if (idFound.isEmpty()) {
+            Employee employeeFound = employeeRepository.findById(body.id()).orElseThrow(() -> new NotFoundException(body.id()));
+            found.setEmployee(employeeFound);
+            found.setDeviceType(found.getDeviceType());
+            found.setDeviceStatus(DeviceStatus.ASSIGNED);
+            found.setId(found.getId());
+            return deviceRepository.save(found);
+        } else if(found.getDeviceStatus() == DeviceStatus.ASSIGNED) {
+                throw new BadRequestException("Device already ASSIGNED! If you want to change user make it AVAILABLE first!");
+            } else {
+            throw new BadRequestException("The employee already has a Device!");
+        }
+    }
 }

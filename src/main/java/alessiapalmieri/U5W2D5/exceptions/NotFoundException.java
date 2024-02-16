@@ -5,7 +5,7 @@ public class NotFoundException extends RuntimeException {
         super(message);
     }
 
-    public NotFoundException(int id) {
+    public NotFoundException(long id) {
         super(id + " not found!");
     }
 }
