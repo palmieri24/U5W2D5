@@ -5,12 +5,17 @@ import alessiapalmieri.U5W2D5.entities.Employee;
 import alessiapalmieri.U5W2D5.exceptions.BadRequestException;
 import alessiapalmieri.U5W2D5.exceptions.NotFoundException;
 import alessiapalmieri.U5W2D5.repositories.EmployeeRepository;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.image.ImagingOpException;
+import java.io.IOException;
 
 @Service
 public class EmployeeService {
@@ -56,4 +61,11 @@ public class EmployeeService {
         Employee found = this.findById(id);
         employeeRepository.delete(found);
     }
+
+//    public Employee uploadAvatar(long id, MultipartFile file) throws IOException{
+//        Employee found = this.findById(id);
+//        String avatarURL = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+//        found.setAvatarURL(avatarURL);
+//        return employeeRepository.save(found);
+//    }
 }

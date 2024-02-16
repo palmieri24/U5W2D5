@@ -13,6 +13,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByEmail(String email);
     Optional<Employee> findByUsername(String username);
     Page<Employee> findByName(String name, Pageable pageable);
-    Page<Employee> findByLastName(String lastname, Pageable pageable);
-    Page<Employee> findByNameAndLastName(String name, String lastname, Pageable pageable);
+    Page<Employee> findByLastname(String lastname, Pageable pageable);
+    Page<Employee> findByNameAndLastname(String name, String lastname, Pageable pageable);
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -53,6 +54,15 @@ public class EmployeeController {
     public void findByIdAndDelete(@PathVariable long id) throws NotFoundException {
         employeeService.findByIdAndDelete(id);
     }
+
+//    @PatchMapping("/{id}/avatar")
+//    public Employee uploadAvatar(@RequestParam("avatar")MultipartFile file, @PathVariable long id){
+//        try {
+//            return employeeService.uploadAvatar(id,file);
+//        } catch (IOException e){
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 
 }

@@ -4,7 +4,6 @@ import alessiapalmieri.U5W2D5.DTO.NewDeviceDTO;
 import alessiapalmieri.U5W2D5.DTO.NewEmployeeDeviceDTO;
 import alessiapalmieri.U5W2D5.DTO.NewStatusDTO;
 import alessiapalmieri.U5W2D5.Enum.DeviceStatus;
-import alessiapalmieri.U5W2D5.Enum.DeviceType;
 import alessiapalmieri.U5W2D5.entities.Device;
 import alessiapalmieri.U5W2D5.entities.Employee;
 import alessiapalmieri.U5W2D5.exceptions.BadRequestException;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -43,26 +41,8 @@ public class DeviceService {
 
     public Device save(NewDeviceDTO body) {
         Device newDevice = new Device();
-        String deviceType = body.deviceType();
-
-        if (deviceType == null) {
-            throw new BadRequestException("Device type is a mandatory field! Choose between SMARTPHONE, TABLET, LAPTOP");
-        }
-        switch (deviceType.trim().toUpperCase()) {
-            case "SMARTPHONE":
-                newDevice.setDeviceType(DeviceType.SMARTPHONE);
-                break;
-            case "TABLET":
-                newDevice.setDeviceType(DeviceType.TABLET);
-                break;
-            case "LAPTOP":
-                newDevice.setDeviceType(DeviceType.LAPTOP);
-                break;
-            default:
-                throw new BadRequestException("Invalid or non-string input! Choose between SMARTPHONE, TABLET, LAPTOP");
-        }
+        newDevice.setDeviceType(body.deviceType());
         newDevice.setDeviceStatus(DeviceStatus.AVAILABLE);
-        newDevice.setEmployee(null);
         return deviceRepository.save(newDevice);
     }
 
