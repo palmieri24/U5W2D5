@@ -26,11 +26,10 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private List<Device> deviceList;
 
-    public Employee(String username, String name, String lastname, String email, String avatarURL) {
+    public Employee(String username, String name, String lastname, String email) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
         this.email = email;
-        this.avatarURL = avatarURL;
     }
 }

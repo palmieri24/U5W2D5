@@ -17,7 +17,5 @@ public record NewEmployeeDTO(
         String lastname,
         @Email(message = "Enter email")
         @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not valid!")
-        String email,
-        @NotEmpty(message = "Enter Avatar URL")
-        String avatarUrl) {
+        String email) {
 }
